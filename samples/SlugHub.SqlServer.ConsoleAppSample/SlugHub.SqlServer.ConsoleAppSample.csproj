@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net452</TargetFramework>
     <Configurations>Debug;Release</Configurations>
@@ -47,15 +47,12 @@
     <ProjectReference Include="..\..\src\SlugHub.SqlServer\SlugHub.SqlServer.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="SlugHub" Version="1.0.5" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="SlugHub, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SlugHub.1.0.5\lib\net45\SlugHub.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Configuration" />
+    <PackageReference Include="SlugHub" Version="1.0.7" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Configuration" />
   </ItemGroup>
 </Project>

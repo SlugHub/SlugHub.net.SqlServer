@@ -31,7 +31,7 @@ namespace SlugHub.SqlServer.ConsoleAppSample
             var stopwatch = Stopwatch.StartNew();
 
             Console.WriteLine("");
-            Console.WriteLine("Creating slugs...");
+            Console.WriteLine("Creating slugs without grouping keys...");
 
             for (var i = 1; i <= 1000; i++)
             {
@@ -44,6 +44,21 @@ namespace SlugHub.SqlServer.ConsoleAppSample
             Console.WriteLine("");
             Console.WriteLine("Took " + stopwatch.ElapsedMilliseconds + "ms");
             Console.WriteLine("");
+
+            Console.WriteLine("Creating slugs with grouping keys...");
+
+            for (var i = 1; i <= 1000; i++)
+            {
+                var slug = slugGenerator.GenerateSlug("Some text that needs slugging " + i, "group1");
+                Console.Write("\r{0} slugs created", i);
+            }
+
+            stopwatch.Stop();
+
+            Console.WriteLine("");
+            Console.WriteLine("Took " + stopwatch.ElapsedMilliseconds + "ms");
+            Console.WriteLine("");
+
             Console.WriteLine("Press any key to exit.");
             Console.ReadKey();
 
