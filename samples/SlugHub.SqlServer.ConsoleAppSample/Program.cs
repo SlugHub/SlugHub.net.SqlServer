@@ -1,9 +1,7 @@
-﻿using SlugHub.SqlServer;
-using System;
+﻿using System;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.IO;
 
 namespace SlugHub.SqlServer.ConsoleAppSample
 {
