@@ -39,8 +39,11 @@ namespace SlugHub.SqlServer.ConsoleAppSample
 
             for (var i = 1; i <= 1000; i++)
             {
+                var individualStopWatch = Stopwatch.StartNew();
                 var slug = await slugGenerator.GenerateSlugAsync("Some text that needs slugging " + i);
-                Console.Write("\r{0} slugs created", i);
+                individualStopWatch.Stop();
+
+                Console.Write($"\r{i} slugs created ({individualStopWatch.ElapsedMilliseconds}ms)");
             }
 
             stopwatch.Stop();
