@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.2" />
-    <PackageReference Include="SlugHub" Version="2.0.27-beta" />
+    <PackageReference Include="SlugHub" Version="2.0.28" />
   </ItemGroup>
 
 </Project>
