@@ -1,0 +1,44 @@
+version: 1.0.{build}
+configuration: Release
+
+image: Visual Studio 2017
+
+pull_requests:
+  do_not_increment_build_number: true
+
+skip_tags: true
+
+skip_commits:
+  files:
+    - '**/*.md'
+
+branches:
+  only:
+  - master
+  - /feature.*/
+
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: 1.0.0.0
+  file_version: '{version}'
+  informational_version: '{version}'
+
+nuget:
+  project_feed: true
+  disable_publish_on_pr: true
+
+before_build:
+  - cmd: dotnet --info
+  - cmd: dotnet restore --verbosity Minimal
+
+build_script:
+  - cmd: dotnet build --configuration %CONFIGURATION%
+
+after_build:
+  - cmd: dotnet pack src\SlugHub.SqlServer.csproj --include-symbols --configuration %CONFIGURATION% --no-build --output ..\nupkgs /p:PackageVersion=%APPVEYOR_BUILD_VERSION%
+
+artifacts:
+  - path: nupkgs\*.nupkg
