@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Configuration;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace SlugHub.SqlServer.ConsoleAppSample
 {
-    class Program
+    public class Program
     {
-        static void Main()
+        public static async Task Main()
         {
             Console.WriteLine("This sample will create a slug for a piece of text, with 1000 iterations");
             Console.WriteLine("Please press any key to continue.");
@@ -15,18 +15,20 @@ namespace SlugHub.SqlServer.ConsoleAppSample
 
             Console.ReadKey();
 
-            RunSqlServerSlugStore();
+            await RunSqlServerSlugStore();
         }
 
-        private static void RunSqlServerSlugStore()
+        private static async Task RunSqlServerSlugStore()
         {
             Console.Clear();
 
-            SetupLocalDbIfRequired();
+            var conn = @"Server=(localdb)\mssqllocaldb;Database=SlugHub_Test;Trusted_Connection=True;Integrated Security=True";
+
+            SetupLocalDbIfRequired(conn);
 
             var slugGenerator = new SlugGenerator(
                 new SlugGeneratorOptions { IterationSeedValue = 1000 },
-                new SqlServerSlugStore(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString));
+                new SqlServerSlugStore(conn));
 
             var stopwatch = Stopwatch.StartNew();
 
@@ -36,7 +38,7 @@ namespace SlugHub.SqlServer.ConsoleAppSample
             for (var i = 1; i <= 1000; i++)
             {
                 var individualStopWatch = Stopwatch.StartNew();
-                var slug =  slugGenerator.GenerateSlug("Some text that needs slugging " + i);
+                var slug = await slugGenerator.GenerateSlugAsync("Some text that needs slugging " + i);
                 individualStopWatch.Stop();
 
                 Console.Write($"\r{i} slugs created ({individualStopWatch.ElapsedMilliseconds}ms)");
@@ -52,7 +54,7 @@ namespace SlugHub.SqlServer.ConsoleAppSample
 
             for (var i = 1; i <= 1000; i++)
             {
-                var slug = slugGenerator.GenerateSlug("Some text that needs slugging " + i, "group1");
+                var slug = await slugGenerator.GenerateSlugAsync("Some text that needs slugging " + i, "group1");
                 Console.Write("\r{0} slugs created", i);
             }
 
@@ -68,13 +70,11 @@ namespace SlugHub.SqlServer.ConsoleAppSample
             Environment.Exit(0);
         }
 
-        private static void SetupLocalDbIfRequired()
+        private static void SetupLocalDbIfRequired(string connectionString)
         {
             Console.WriteLine("Setting up SQL Server DB");
 
-            var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"];
-
-            if (!connectionString.ConnectionString.Contains("localdb"))
+            if (!connectionString.Contains("localdb"))
                 return;
 
             var dbFileName = AppDomain.CurrentDomain.BaseDirectory + "SlugHub.mdf";

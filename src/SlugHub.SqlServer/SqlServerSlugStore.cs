@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 using Dapper;
 using SlugHub.SlugStore;
 
@@ -26,7 +27,7 @@ namespace SlugHub.SqlServer
             Installer.InstallSqlTable(_connectionString, _options);
         }
 
-        public bool Exists(string slug, string groupingKey)
+        public async Task<bool> ExistsAsync(string slug, string groupingKey)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
@@ -34,7 +35,7 @@ namespace SlugHub.SqlServer
 
                 object queryParameters;
                 var queryText = $"select count(slug) from [{_options.TableSchema}].[{_options.TableName}] " +
-                            $"where [Slug] = @slug";
+                                $"where [Slug] = @slug";
 
                 if (!string.IsNullOrEmpty(groupingKey))
                 {
@@ -46,13 +47,13 @@ namespace SlugHub.SqlServer
                     queryParameters = new { slug };
                 }
 
-                var slugResult = sqlConnection.ExecuteScalar<int>(queryText, queryParameters);
+                var slugResult = await sqlConnection.ExecuteScalarAsync<int>(queryText, queryParameters);
 
                 return slugResult > 0;
             }
         }
 
-        public void Store(Slug slug)
+        public async Task StoreAsync(Slug slug)
         {
             var groupingKey = string.IsNullOrEmpty(slug.GroupingKey)
                 ? DefaultGroupingKey
@@ -63,9 +64,9 @@ namespace SlugHub.SqlServer
                 sqlConnection.Open();
 
                 var command = $"insert into [{_options.TableSchema}].[{_options.TableName}]" +
-                    "([Slug],[GroupingKey],[Created]) values (@Slug,@GroupingKey,@Created)";
+                              "([Slug],[GroupingKey],[Created]) values (@Slug,@GroupingKey,@Created)";
 
-                sqlConnection.Execute(command, new
+                await sqlConnection.ExecuteAsync(command, new
                 {
                     Slug = slug.Value,
                     GroupingKey = groupingKey,
